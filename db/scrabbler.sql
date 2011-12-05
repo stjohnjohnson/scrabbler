@@ -20,6 +20,7 @@ CREATE TABLE bot (
   m_time          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   c_time          TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (bot_id),
+  UNIQUE KEY (name),
   KEY c_time (c_time),
   KEY m_time (m_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -41,7 +42,7 @@ CREATE TABLE series (
   type            ENUM('challenge','training','ranked') NOT NULL DEFAULT 'challenge',
   m_time          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   c_time          TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (set_id),
+  PRIMARY KEY (series_id),
   KEY c_time (c_time),
   KEY m_time (m_time),
   CONSTRAINT series_fk_1 FOREIGN KEY (bot1_id) REFERENCES bot (bot_id) ON DELETE CASCADE,
@@ -49,7 +50,7 @@ CREATE TABLE series (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE DEFINER=`root`@`localhost` TRIGGER set_bi_trg
-  BEFORE INSERT ON set
+  BEFORE INSERT ON series
   FOR EACH ROW SET
     NEW.c_time = NOW();
 
