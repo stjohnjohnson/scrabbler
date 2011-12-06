@@ -38,6 +38,8 @@ CREATE TABLE series (
   series_id       INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   bot1_id         INT(10) UNSIGNED NOT NULL DEFAULT 0,
   bot2_id         INT(10) UNSIGNED NOT NULL DEFAULT 0,
+  bot1_rank       INT(10) UNSIGNED NOT NULL DEFAULT 0,
+  bot2_rank       INT(10) UNSIGNED NOT NULL DEFAULT 0,
   outcome         ENUM('pending', 'bot1', 'bot2', 'tie') NOT NULL DEFAULT 'pending',
   type            ENUM('challenge','training','ranked') NOT NULL DEFAULT 'challenge',
   m_time          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -71,6 +73,7 @@ CREATE TABLE game (
   m_time          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   c_time          TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
   accepted_time   TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+  completed_time  TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (game_id),
   KEY c_time (c_time),
   KEY m_time (m_time),
@@ -96,7 +99,7 @@ CREATE TABLE move (
   command         VARCHAR(20) NOT NULL DEFAULT '',
   rack            VARCHAR(7) NOT NULL DEFAULT '',
   points          INT(10) UNSIGNED NOT NULL DEFAULT 0,
-  time            DECIMAL(5,3) UNSIGNED NOT NULL DEFAULT 0.0,
+  time            INT(10) UNSIGNED NOT NULL DEFAULT 0,
   is_trade        BOOL NOT NULL DEFAULT 0,
   m_time          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   c_time          TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -118,10 +121,9 @@ CREATE DEFINER=`root`@`localhost` TRIGGER move_bi_trg
 -- +---------------------------------------------------------------------------+
 DROP TABLE IF EXISTS word;
 CREATE TABLE word (
-  move_id         INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  move_id         INT(10) UNSIGNED NOT NULL DEFAULT 0,
   bot_id          INT(10) UNSIGNED NOT NULL DEFAULT 0,
-  word            INT(10) UNSIGNED NOT NULL DEFAULT 0,
-  points          INT(10) UNSIGNED NOT NULL DEFAULT 0,
+  word            VARCHAR(15) NOT NULL DEFAULT '',
   coord           VARCHAR(3) NOT NULL DEFAULT '',
   m_time          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   c_time          TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
