@@ -2,7 +2,7 @@
 
 namespace Pages;
 
-class Dashboard extends \Helpers\Page {
+class Dashboard extends \Models\Page {
   public function index() {
     return 'index';
   }
