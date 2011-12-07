@@ -50,4 +50,4 @@ if (!class_exists($class)) {
   $class = 'pages\\dashboard';
 }
 
-$class::execute($_SERVER['path'][1]);
+$class::execute(array_slice($_SERVER['path'], 1));
