@@ -47,7 +47,9 @@ abstract class Page {
   }
 
   private function outputHTML($object) {
+    echo '<pre>';
     var_dump($object);
+    echo '</pre>';
     die();
   }
 
