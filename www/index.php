@@ -6,10 +6,6 @@
  * @author St. John Johnson <st.john.johnson@gmail.com>
  */
 
-// Start Output Buffering
-// @todo Generalize this
-ob_start();
-
 // Autoloader
 spl_autoload_register(function($class) {
   $file = implode('/', explode('\\', lcfirst($class))) . '.php';

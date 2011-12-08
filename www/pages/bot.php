@@ -15,13 +15,13 @@ use \Helpers\DB,
     \PDO;
 
 class Bot extends \Models\Page {
-  private function _getId($params) {
+  private function _getBot($params) {
     list($id, ) = $params;
     if (!ctype_digit($id)) {
       throw new Exception('Bot Not Found', 404);
     }
 
-    return $id;
+    return new \Models\Bot($id);
   }
 
   public function index() {
@@ -29,12 +29,10 @@ class Bot extends \Models\Page {
   }
 
   public function view($params) {
-    $id = $this->_getId($params);
+    $bot = $this->_getBot($params)->load();
 
-    $stmt = DB::prepare("SELECT * FROM bot WHERE bot_id = ?");
-    $stmt->execute(array($id));
-
-    return $stmt->fetch(PDO::FETCH_ASSOC);
+    $this->title = "Bot &raquo; #{$obj->bot_id} {$obj->name} ({$obj->status})";
+    return print_r($bot, true);
   }
 
   public function source($params) {
@@ -43,7 +41,7 @@ class Bot extends \Models\Page {
     // Load file
     $filename = $id . '.tar.gz';
     if (!is_file('bots/' . $filename)) {
-      throw new Exception('Cannot find source for Bot #' . $id);
+      throw new Exception('Cannot find source for Bot #' . $id, 404);
     }
 
     // Download the file

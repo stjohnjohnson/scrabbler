@@ -11,13 +11,15 @@
 
 namespace Models;
 
-use \Exception;
+use \Exception,
+    \Helpers\Template;
 
 abstract class Page {
   const OUTPUT_JSON = 'JSON';
   const OUTPUT_HTML = 'HTML';
 
   protected $output = self::OUTPUT_HTML;
+  protected $title = '';
 
   /**
    * Changes the method's output type
@@ -32,29 +34,38 @@ abstract class Page {
     }
   }
 
-  public function output($object, $isError = false) {
+  public function output($object) {
     $method = 'output' . $this->output;
 
     // Check if there's an error
-    if ($isError) {
+    if (is_a($object, 'Exception')) {
       // Set error code
-      header($_SERVER['SERVER_PROTOCOL'] . ' ' . $object['code']);
-
-      // Do something else?
+      header($_SERVER['SERVER_PROTOCOL'] . ' ' . $object->getCode());
     }
 
     return $this->$method($object);
   }
 
   private function outputHTML($object) {
-    echo '<pre>';
-    var_dump($object);
-    echo '</pre>';
-    die();
+    if (is_a($object, 'Exception')) {
+      $this->title = 'Error ' . $object['code'];
+      $object = Template::error($object);
+    }
+
+    die(Template::base(array(
+        'title' => $this->title,
+         'body' => $object
+    )));
   }
 
   private function outputJSON($object) {
-    ob_clean();
+    // Check for exceptions
+    if (is_a($object, 'Exception')) {
+      $object = array(
+          'code' => $object->getCode(),
+       'message' => $object->getMessage()
+      );
+    }
 
     // Converts all numbers to ints, etc
     if (is_array($object)) {
@@ -91,10 +102,7 @@ abstract class Page {
     try {
       $obj->output($obj->$method($params));
     } catch (Exception $e) {
-      $obj->output(array(
-          'message' => $e->getMessage(),
-             'code' => $e->getCode()
-      ), true);
+      $obj->output($e);
     }
   }
 
